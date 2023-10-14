@@ -7,6 +7,7 @@ const userSchema = new mongoose.Schema({
     category:String,
     userId:String,
     brand:String,
+
 })
 
 

@@ -8,26 +8,25 @@ const product = require("./product");
 app.use(express.json());
 app.use(cors());
 app.post("/register", async (req, res) => {
-    let check = await user.findOne(req.body);
-  
-   if( check.name){
-         res.send({
-          messgae:'user already register'
-         })
-   }else{
-   const data = new user(req.body);
+  let check = await user.findOne(req.body);
 
-  const result = await data.save();
-  console.log(typeof result);
-  const newResult = result.toObject();
-  delete newResult.password;
+  if (check.name) {
+    res.send({
+      messgae: "user already register",
+    });
+  } else {
+    const data = new user(req.body);
 
-  res.send({
-    message: "done",
-    newResult,
-  });
-   }
-   
+    const result = await data.save();
+    console.log(typeof result);
+    const newResult = result.toObject();
+    delete newResult.password;
+
+    res.send({
+      message: "done",
+      newResult,
+    });
+  }
 });
 app.post("/login", async (req, res) => {
   if (req.body.email && req.body.password) {
@@ -42,14 +41,31 @@ app.post("/login", async (req, res) => {
     res.send({ result: "no user found" });
   }
 });
-app.post('/add-product', async (req,res)=>{
+app.post("/add-product", async (req, res) => {
   let products = new product(req.body);
-  let result = await products.save();
-   console.log(result);
-   res.send({
-    message:'Done',
-    result
-   });
 
-})
+  let result = await products.save();
+  console.log(result);
+  res.send({
+    message: "Done",
+    result,
+  });
+});
+app.get("/products", async (req, res) => {
+  let products = await product.find();
+  if (products.length > 0) {
+    res.send(products);
+  } else {
+    res.send({
+      result: "no products found",
+    });
+  }
+});
+app.delete("/delete/:_id", async (req, res) => {
+  console.log(req.params);
+
+  let products = await product.deleteOne(req.params);
+  console.log(products);
+  res.send(products);
+});
 app.listen(5000);
